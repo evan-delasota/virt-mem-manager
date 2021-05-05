@@ -47,7 +47,7 @@ int main(int argc, const char* argv[]) {
       //   e.g., address # 25 from addresses.txt will fail the assertion
       // TODO:  add page table code
       // TODO:  add TLB code
-  while (frame < 20) {
+  while (frame < FRAME_SIZE) {
 
     fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
            buf, buf, &phys_add, buf, &value);  // read from file correct.txt
@@ -61,7 +61,7 @@ int main(int argc, const char* argv[]) {
     assert(physical_add == phys_add);
     
     // todo: read BINARY_STORE and confirm value matches read value from correct.txt
-    
+    //fscanf();
     printf("logical: %5u (page: %3u, offset: %3u) ---> physical: %5u -- passed\n", logic_add, page, offset, physical_add);
     if (frame % 5 == 0) { printf("\n"); }
   }
