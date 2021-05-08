@@ -15,9 +15,14 @@
 #define FILE_ERROR 2
 #define BUFLEN 256
 #define FRAME_SIZE  256
+#define TLB_SIZE 16
 
 
 //-------------------------------------------------------------------
+struct tlb {
+  unsigned char logical;
+  unsigned char physical;
+};
 unsigned getpage(unsigned x) { return (0xff00 & x) >> 8; }
 
 unsigned getoffset(unsigned x) { return (0xff & x); }
@@ -40,13 +45,24 @@ int main(int argc, const char* argv[]) {
   unsigned   page, offset, physical_add, frame = 0;
   unsigned   logic_add;                  // read from file address.txt
   unsigned   virt_add, phys_add, value;  // read from file correct.txt
-
-  printf("ONLY READ FIRST 20 entries -- TODO: change to read all entries\n\n");
-
   // not quite correct -- should search page table before creating a new entry
-      //   e.g., address # 25 from addresses.txt will fail the assertion
-      // TODO:  add page table code
-      // TODO:  add TLB code
+  //   e.g., address # 25 from addresses.txt will fail the assertion
+  // TODO:  add page table code
+  // TODO:  add TLB code
+  int page_table[BUFLEN]; 
+  int page_frames[FRAME_SIZE];
+  int used_frame[FRAME_SIZE];
+  int total_add = 0;
+  int hits = 0;
+  int page_faults = 0;
+
+  for (auto i = 0; i < BUFLEN; ++i) {
+    page_table[i] = -1;
+    page_frames[i] = -1;
+    used_frame[i] = 0;
+  }
+
+
   while (frame < FRAME_SIZE) {
 
     fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
@@ -61,21 +77,22 @@ int main(int argc, const char* argv[]) {
     assert(physical_add == phys_add);
     
     // todo: read BINARY_STORE and confirm value matches read value from correct.txt
-    //fscanf();
+    unsigned char bin[BUFLEN];
+    FILE *ptr;
+
+    ptr = fopen("BACKING_STORE", "rb");
+    fread(bin, sizeof(bin), 1, ptr);
+
     printf("logical: %5u (page: %3u, offset: %3u) ---> physical: %5u -- passed\n", logic_add, page, offset, physical_add);
     if (frame % 5 == 0) { printf("\n"); }
   }
   fclose(fcorr);
   fclose(fadd);
   
-  printf("ONLY READ FIRST 20 entries -- TODO: change to read all entries\n\n");
   
   printf("ALL logical ---> physical assertions PASSED!\n");
   printf("!!! This doesn't work passed entry 24 in correct.txt, because of a duplicate page table entry\n");
   printf("--- you have to implement the PTE and TLB part of this code\n");
-
-//  printf("NOT CORRECT -- ONLY READ FIRST 20 ENTRIES... TODO: MAKE IT READ ALL ENTRIES\n");
-
   printf("\n\t\t...done.\n");
   return 0;
 }
