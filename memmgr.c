@@ -16,6 +16,7 @@
 #define FILE_ERROR 2
 #define BUFLEN 256
 #define FRAME_SIZE  256
+#define PAGE_SIZE 256
 #define TLB_SIZE 16
 
 
@@ -91,7 +92,7 @@ int main(int argc, const char* argv[]) {
     assert(physical_add == phys_add);
     
     // todo: read BINARY_STORE and confirm value matches read value from correct.txt
-    int backing_fd = open("BACKING_STORE.bin", O_RDONLY);
+    int backing = open("BACKING_STORE.bin", O_RDONLY);
     unsigned char bin[BUFLEN];
     FILE *ptr;
 
@@ -104,7 +105,8 @@ int main(int argc, const char* argv[]) {
   fclose(fcorr);
   fclose(fadd);
   
-  
+  page_faults =  page_faults / (sizeof page_table);
+  printf("Page fault rate: %d, TLB Hit Rate: %d", page_faults, hits);
   printf("ALL logical ---> physical assertions PASSED!\n");
   printf("!!! This doesn't work passed entry 24 in correct.txt, because of a duplicate page table entry\n");
   printf("--- you have to implement the PTE and TLB part of this code\n");
