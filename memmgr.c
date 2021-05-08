@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <types.h>
 
 #define ARGC_ERROR 1
 #define FILE_ERROR 2
@@ -20,9 +21,22 @@
 
 //-------------------------------------------------------------------
 struct tlb {
-  unsigned char logical;
-  unsigned char physical;
+  unsigned char logical_add;
+  unsigned char physical_add;
 };
+
+int tlb_index = 0;
+struct tlb tlb_struct[TLB_SIZE];
+
+void tlb_add(unsigned char logical_add, unsigned char physical_add) {
+  struct tlb *candidate = *tlb_struct[tlb_index * TLB_SIZE];
+  
+  tlb_index++;
+  candidate->logical_add = logical_add;
+  candidate->physical_add = physical_add;
+
+}
+
 unsigned getpage(unsigned x) { return (0xff00 & x) >> 8; }
 
 unsigned getoffset(unsigned x) { return (0xff & x); }
@@ -77,6 +91,7 @@ int main(int argc, const char* argv[]) {
     assert(physical_add == phys_add);
     
     // todo: read BINARY_STORE and confirm value matches read value from correct.txt
+    int backing_fd = open("BACKING_STORE.bin", O_RDONLY);
     unsigned char bin[BUFLEN];
     FILE *ptr;
 
