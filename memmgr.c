@@ -11,6 +11,8 @@
 #include <string.h>
 #include <assert.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define ARGC_ERROR 1
 #define FILE_ERROR 2
@@ -30,7 +32,7 @@ int tlb_index = 0;
 struct tlb tlb_struct[TLB_SIZE];
 
 void tlb_add(unsigned char logical_add, unsigned char physical_add) {
-  struct tlb *candidate = *tlb_struct[tlb_index * TLB_SIZE];
+  struct tlb *candidate = &tlb_struct[tlb_index * TLB_SIZE];
   
   tlb_index++;
   candidate->logical_add = logical_add;
