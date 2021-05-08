@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <types.h>
+#include <sys/types.h>
 
 #define ARGC_ERROR 1
 #define FILE_ERROR 2
